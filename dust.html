@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Dustbin Monitoring - Tamil Nadu</title>
+    <style>
+        /* Simple CSS Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .dustbin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .dustbin-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .dustbin-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .dustbin-image {
+            position: relative;
+            height: 150px;
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .dustbin-icon {
+            font-size: 60px;
+            color: white;
+        }
+        
+        .fill-level {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 0%;
+            background: rgba(0,0,0,0.3);
+            transition: height 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .dustbin-info {
+            padding: 15px;
+        }
+        
+        .dustbin-info h3 {
+            color: #2d3436;
+            margin-bottom: 10px;
+        }
+        
+        .gps-info {
+            color: #636e72;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .status {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 14px;
+        }
+        
+        .status-empty {
+            background: #00b894;
+            color: white;
+        }
+        
+        .status-partial {
+            background: #fdcb6e;
+            color: #2d3436;
+        }
+        
+        .status-full {
+            background: #d63031;
+            color: white;
+        }
+        
+        .send-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            font-weight: bold;
+        }
+        
+        .send-btn:hover {
+            background: #2980b9;
+        }
+        
+        .send-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        
+        .map-section {
+            padding: 20px;
+            background: #ecf0f1;
+            margin: 20px;
+            border-radius: 10px;
+        }
+        
+        .map-section h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .simple-map {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            height: 200px;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .location-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            border: 3px solid #e74c3c;
+            transform: translate(-50%, -50%);
+        }
+        
+        .truck-status {
+            background: #dfe6e9;
+            padding: 15px;
+            margin: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .truck-status h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .status-message {
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 5px;
+            background: #b2bec3;
+            color: #2d3436;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #2c3e50;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .dustbin-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗑️ Smart Dustbin Monitoring System</h1>
+            <p>Tamil Nadu Municipal Corporation - Real-time Tracking</p>
+        </header>
+
+        <div class="dustbin-grid">
+            <!-- Dustbin 1 - Chennai -->
+            <div class="dustbin-card">
+                <div class="dustbin-image">
+                    <div class="dustbin-icon">🗑️</div>
+                    <div class="fill-level" style="height: 25%;">25%</div>
+                </div>
+                <div class="dustbin-info">
+                    <h3>Chennai Central</h3>
+                    <p class="gps-info">📍 GPS: 13.0827, 80.2707</p>
+                    <span class="status status-empty">Empty - Good</span>
+                    <button class="send-btn" disabled>Send Truck</button>
+                </div>
+            </div>
+
+            <!-- Dustbin 2 - Coimbatore -->
+            <div class="dustbin-card">
+                <div class="dustbin-image">
+                    <div class="dustbin-icon">🗑️</div>
+                    <div class="fill-level" style="height: 60%;">60%</div>
+                </div>
+                <div class="dustbin-info">
+                    <h3>Coimbatore Market</h3>
+                    <p class="gps-info">📍 GPS: 11.0168, 76.9558</p>
+                    <span class="status status-partial">Partial - Monitor</span>
+                    <button class="send-btn" disabled>Send Truck</button>
+                </div>
+            </div>
+
+            <!-- Dustbin 3 - Madurai -->
+            <div class="dustbin-card">
+                <div class="dustbin-image">
+                    <div class="dustbin-icon">🗑️</div>
+                    <div class="fill-level" style="height: 85%;">85%</div>
+                </div>
+                <div class="dustbin-info">
+                    <h3>Madurai Temple</h3>
+                    <p class="gps-info">📍 GPS: 9.9252, 78.1198</p>
+                    <span class="status status-full">Full - Needs Collection!</span>
+                    <button class="send-btn">Send Truck</button>
+                </div>
+            </div>
+
+            <!-- Dustbin 4 - Trichy -->
+            <div class="dustbin-card">
+                <div class="dustbin-image">
+                    <div class="dustbin-icon">🗑️</div>
+                    <div class="fill-level" style="height: 40%;">40%</div>
+                </div>
+                <div class="dustbin-info">
+                    <h3>Trichy Bus Stand</h3>
+                    <p class="gps-info">📍 GPS: 10.7905, 78.7047</p>
+                    <span class="status status-empty">Empty - Good</span>
+                    <button class="send-btn" disabled>Send Truck</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="map-section">
+            <h2>📍 Tamil Nadu Dustbin Locations</h2>
+            <div class="simple-map">
+                <div class="location-marker" style="left: 30%; top: 40%;"></div>
+                <div class="location-marker" style="left: 20%; top: 60%;"></div>
+                <div class="location-marker" style="left: 50%; top: 70%;"></div>
+                <div class="location-marker" style="left: 40%; top: 50%;"></div>
+            </div>
+            <p style="text-align: center; margin-top: 10px; color: #636e72;">
+                GPS tracking enabled for municipal monitoring
+            </p>
+        </div>
+
+        <div class="truck-status">
+            <h3>🚛 Municipal Truck Status</h3>
+            <div class="status-message">
+                Truck Available - Ready for Dispatch
+            </div>
+        </div>
+
+        <footer>
+            <p>Smart Dustbin Monitoring System © 2024 - Tamil Nadu Municipal Corporation</p>
+            <p>Designed for GPS tracking and efficient waste management</p>
+        </footer>
+    </div>
+
+    <script>
+        // Simple JavaScript for interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            const sendButtons = document.querySelectorAll('.send-btn');
+            
+            sendButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (!this.disabled) {
+                        const dustbinCard = this.closest('.dustbin-card');
+                        const fillLevel = dustbinCard.querySelector('.fill-level');
+                        const status = dustbinCard.querySelector('.status');
+                        
+                        // Reset fill level to 0%
+                        fillLevel.style.height = '0%';
+                        fillLevel.textContent = '0%';
+                        
+                        // Update status
+                        status.textContent = 'Empty - Good';
+                        status.className = 'status status-empty';
+                        
+                        // Disable button
+                        this.disabled = true;
+                        this.textContent = 'Truck Sent';
+                        
+                        // Update truck status
+                        document.querySelector('.status-message').textContent = 
+                            'Truck dispatched to ' + dustbinCard.querySelector('h3').textContent;
+                    }
+                });
+            });
+            
+            // Simulate dustbin filling over time
+            setInterval(() => {
+                const fillLevels = document.querySelectorAll('.fill-level');
+                const sendButtons = document.querySelectorAll('.send-btn');
+                const statusElements = document.querySelectorAll('.status');
+                
+                fillLevels.forEach((fillLevel, index) => {
+                    let currentLevel = parseInt(fillLevel.style.height);
+                    if (currentLevel < 100 && !sendButtons[index].disabled) {
+                        // Increase fill level by 1-3%
+                        const increase = Math.floor(Math.random() * 3) + 1;
+                        const newLevel = Math.min(100, currentLevel + increase);
+                        fillLevel.style.height = newLevel + '%';
+                        fillLevel.textContent = newLevel + '%';
+                        
+                        // Update status and button
+                        const status = statusElements[index];
+                        const button = sendButtons[index];
+                        
+                        if (newLevel < 40) {
+                            status.textContent = 'Empty - Good';
+                            status.className = 'status status-empty';
+                            button.disabled = true;
+                        } else if (newLevel < 70) {
+                            status.textContent = 'Partial - Monitor';
+                            status.className = 'status status-partial';
+                            button.disabled = true;
+                        } else {
+                            status.textContent = 'Full - Needs Collection!';
+                            status.className = 'status status-full';
+                            button.disabled = false;
+                        }
+                    }
+                });
+            }, 3000); // Update every 3 seconds
+        });
+    </script>
+</body>
+</html>
+
+      <footer className="mt-8 text-center text-muted-foreground text-sm">
+        <p>Smart Dustbin Monitoring System © {new Date().getFullYear()} - Tamil Nadu Municipal Corporation</p>
+      </footer>
+    </div>
+  );
+};
+
+export default SmartDustbinDashboard;
